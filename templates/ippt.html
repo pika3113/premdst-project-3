@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>IPPT</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <h2>IPPT</h2>
@@ -14,12 +15,12 @@
 
 <div>
 <label>Pushups: <span id="pushupValue">30</span></label><br>
-<input type="range" id="pushup" name="pushup" max="60" value="30" oninput="document.getElementById('pushupValue').textContent = this.value"><br><br>
+<input type="range" id="pushup" name="pushup" min="0" max="60" value="30" step="1" oninput="document.getElementById('pushupValue').textContent = this.value"><br><br>
 </div>
 
 <div>
 <label>Situps: <span id="situpValue">30</span></label><br>
-<input type="range" id="situp" name="situp" max="60" value="30" oninput="document.getElementById('situpValue').textContent = this.value"><br><br>
+<input type="range" id="situp" name="situp" min="0" max="60" value="30" step="1" oninput="document.getElementById('situpValue').textContent = this.value"><br><br>
 </div>  
 
 <!-- <div>
@@ -28,48 +29,75 @@
 </div> -->
 
 <label>2.4km Runtime: <span id="runtimeDisplay">12:00</span></label><br>
-<input type="range" id="run" min="360" max="1200" value="720" step="1"
+<input type="range" id="run" min="360" max="1200" value="780" step="10"
        oninput="updateRuntimeDisplay(this.value)">
 <br>
 
 <strong>Total Points:</strong> <span id="score">0</span>
 
  <script>
-  window.onload = function() {
-    
-    
-    age.value = 16;
-    pushup.value = 30;
-    situp.value = 30;
-    run.value = 720;
+  function enableScrollOnSlider(slider) {
+  slider.addEventListener('wheel', function (event) {
+    event.preventDefault();
+    const step = parseInt(slider.step) || 1;
+    const direction = event.deltaY < 0 ? 1 : -1;
+    let newValue = parseInt(slider.value) + direction * step;
+
+    const min = parseInt(slider.min);
+    const max = parseInt(slider.max);
+    slider.value = Math.min(max, Math.max(min, newValue));
+
+    console.log(`${slider.id} - ${slider.value}, ${min},${max}`); 
+    slider.dispatchEvent(new Event('input'));
+  });
+  }
+
+  function updateRuntimeDisplay(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  const paddedSecs = secs.toString().padStart(2, '0');
+  document.getElementById("runtimeDisplay").textContent = `${mins}:${paddedSecs}`;
+  }
+
+  async function updateScore() {
+    const age = document.getElementById("age").value || 0;
+    const pushup = document.getElementById("pushup").value || 0;
+    const situp = document.getElementById("situp").value || 0;
+    const run = document.getElementById("run").value || "200:00";
+
+    const response = await fetch('/calculate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ age, pushup, situp, run })
+    });
+
+    const data = await response.json();
+    document.getElementById("score").textContent = data.score;
+  }
+  
+  window.onload = function() {   
+    document.getElementById("age").value = 16;
+    document.getElementById("pushup").value = 30;
+    document.getElementById("situp").value = 30;
+    document.getElementById("run").value = 780;
     updateScore();
+
+    const ageSlider = document.getElementById('age')
+    const pushupSlider = document.getElementById('pushup')
+    const situpSlider = document.getElementById('situp')
+    const runtimeSlider = document.getElementById('run')
+
+    enableScrollOnSlider(ageSlider);
+    enableScrollOnSlider(pushupSlider);
+    enableScrollOnSlider(situpSlider);
+    enableScrollOnSlider(runtimeSlider);
+
   }
-    function updateRuntimeDisplay(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    const paddedSecs = secs.toString().padStart(2, '0');
-    document.getElementById("runtimeDisplay").textContent = `${mins}:${paddedSecs}`;
-  }
-    async function updateScore() {
-      const age = document.getElementById("age").value || 0;
-      const pushup = document.getElementById("pushup").value || 0;
-      const situp = document.getElementById("situp").value || 0;
-      const run = document.getElementById("run").value || "200:00";
 
-      const response = await fetch('/calculate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ age, pushup, situp, run })
-      });
-
-      const data = await response.json();
-      document.getElementById("score").textContent = data.score;
-    }
-
-    document.getElementById("age").addEventListener("input", updateScore);
-    document.getElementById("pushup").addEventListener("input", updateScore);
-    document.getElementById("situp").addEventListener("input", updateScore);
-    document.getElementById("run").addEventListener("input", updateScore);
+  document.getElementById("age").addEventListener("input", updateScore);
+  document.getElementById("pushup").addEventListener("input", updateScore);
+  document.getElementById("situp").addEventListener("input", updateScore);
+  document.getElementById("run").addEventListener("input", updateScore);
   </script>
   
 </body>

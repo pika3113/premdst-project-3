@@ -1,0 +1,50 @@
+/* General page styling */
+body {
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Header */
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+/* Form labels and values */
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #444;
+}
+
+span.display-value {
+  float: right;
+  font-weight: normal;
+  color: #666;
+}
+
+/* Sliders */
+input[type="range"] {
+  width: 100%;
+  margin-top: 6px;
+  height: 24px;
+  cursor: pointer;
+}
+
+/* Score output */
+.result {
+  margin-top: 30px;
+  text-align: center;
+}
+
+#score {
+  font-size: 1.8em;
+  color: #006400;
+  font-weight: bold;
+}

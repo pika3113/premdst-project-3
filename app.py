@@ -1,10 +1,13 @@
 import csv
 from flask import Flask, render_template,request,jsonify
 
+def timeconv(secs):
+  return divmod(secs,60)
+
 def run(pt,age):
   #830-1820 converts to seconds
   data=list(csv.reader(open('run.csv', newline='')))
-  pt = pt.split(':')
+  pt = timeconv(pt)
   pts = max(0, min(((int(pt[0])*60+int(pt[1]))-510)//10, 59))
   return int(data[pts][age]) if data[pts][age] != '' else 50
 
@@ -38,11 +41,8 @@ def calculate():
   age = int(data.get('age',0))
   pushups = int(data.get('pushup',0))
   situps = int(data.get('situp',0))
-  runtime = data.get('run','20:00')
+  runtime = int(data.get('run',7200))
   age = deterage(age)
-  if ':' not in runtime:
-    runtime = '200:00'
-    print('invalid')
   
   print(age,pushups,situps,runtime)
 
