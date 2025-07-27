@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IPPT</title>
+</head>
+<body>
+  <h2>IPPT</h2>
+
+
+<div>
+<label>Age: <span id="ageValue">16</span></label><br>
+<input type="range" id="age" name="age" min='16' max="110" value="16" oninput="document.getElementById('ageValue').textContent = this.value"><br><br>
+</div>
+
+<div>
+<label>Pushups: <span id="pushupValue">30</span></label><br>
+<input type="range" id="pushup" name="pushup" max="60" value="30" oninput="document.getElementById('pushupValue').textContent = this.value"><br><br>
+</div>
+
+<div>
+<label>Situps: <span id="situpValue">30</span></label><br>
+<input type="range" id="situp" name="situp" max="60" value="30" oninput="document.getElementById('situpValue').textContent = this.value"><br><br>
+</div>  
+
+<!-- <div>
+<label>2.4km Time (mm:ss):</label>
+<input type="text" id="run" name="run"><br><br>
+</div> -->
+
+<label>2.4km Runtime: <span id="runtimeDisplay">12:00</span></label><br>
+<input type="range" id="run" min="360" max="1200" value="720" step="1"
+       oninput="updateRuntimeDisplay(this.value)">
+<br>
+
+<strong>Total Points:</strong> <span id="score">0</span>
+
+ <script>
+  window.onload = function() {
+    
+    
+    age.value = 16;
+    pushup.value = 30;
+    situp.value = 30;
+    run.value = 720;
+    updateScore();
+  }
+    function updateRuntimeDisplay(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    const paddedSecs = secs.toString().padStart(2, '0');
+    document.getElementById("runtimeDisplay").textContent = `${mins}:${paddedSecs}`;
+  }
+    async function updateScore() {
+      const age = document.getElementById("age").value || 0;
+      const pushup = document.getElementById("pushup").value || 0;
+      const situp = document.getElementById("situp").value || 0;
+      const run = document.getElementById("run").value || "200:00";
+
+      const response = await fetch('/calculate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ age, pushup, situp, run })
+      });
+
+      const data = await response.json();
+      document.getElementById("score").textContent = data.score;
+    }
+
+    document.getElementById("age").addEventListener("input", updateScore);
+    document.getElementById("pushup").addEventListener("input", updateScore);
+    document.getElementById("situp").addEventListener("input", updateScore);
+    document.getElementById("run").addEventListener("input", updateScore);
+  </script>
+  
+</body>
+</html>
