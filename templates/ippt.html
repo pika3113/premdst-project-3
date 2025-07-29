@@ -7,35 +7,53 @@
 <body>
   <h2>IPPT</h2>
 
-
 <div>
-<label>Age: <span id="ageValue">16</span></label><br>
-<input type="range" id="age" name="age" min='16' max="110" value="16" oninput="document.getElementById('ageValue').textContent = this.value"><br><br>
+<label>Rank and Name: </label>
+<input type="text">
 </div>
 
 <div>
-<label>Pushups: <span id="pushupValue">30</span></label><br>
-<input type="range" id="pushup" name="pushup" min="0" max="60" value="30" step="1" oninput="document.getElementById('pushupValue').textContent = this.value"><br><br>
+<label>Age: <span id="ageValue">16</span></label>
+<input type="range" id="age" name="age" min='16' max="110" value="16" oninput="document.getElementById('ageValue').textContent = this.value"><br>
 </div>
 
 <div>
-<label>Situps: <span id="situpValue">30</span></label><br>
-<input type="range" id="situp" name="situp" min="0" max="60" value="30" step="1" oninput="document.getElementById('situpValue').textContent = this.value"><br><br>
+<label>Pushups: <span id="pushupValue">30</span></label>
+<input type="range" id="pushup" name="pushup" min="0" max="60" value="30" step="1" oninput="document.getElementById('pushupValue').textContent = this.value"><br>
+</div>
+
+<div>
+<label>Situps: <span id="situpValue">30</span></label>
+<input type="range" id="situp" name="situp" min="0" max="60" value="30" step="1" oninput="document.getElementById('situpValue').textContent = this.value"><br>
 </div>  
+
+<!-- <div id="output">
+  <p><strong>Rank and Name: </strong><span id="pushupPoints">-</span></p>
+  <p><strong>Pushup Points: </strong><span id="pushupPoints">-</span></p>
+  <p><strong>Situp Points:</strong> <span id="situpPoints">-</span></p>
+  <p><strong>Run Points:</strong> <span id="runPoints">-</span></p>
+</div> -->
 
 <!-- <div>
 <label>2.4km Time (mm:ss):</label>
 <input type="text" id="run" name="run"><br><br>
 </div> -->
 
-<label>2.4km Runtime: <span id="runtimeDisplay">12:00</span></label><br>
+<label>2.4km Runtime: <span id="runtimeDisplay">12:00</span></label>
 <input type="range" id="run" min="360" max="1200" value="780" step="10"
        oninput="updateRuntimeDisplay(this.value)">
-<br>
+<br><br>
 
 <strong>Total Points:</strong> <span id="score">0</span>
 
  <script>
+  // const savedScores = [];
+
+
+  // document.getElementById('saveScore').addEventListener(click, () => {
+    
+  // })
+
   function enableScrollOnSlider(slider) {
   slider.addEventListener('wheel', function (event) {
     event.preventDefault();
@@ -47,7 +65,7 @@
     const max = parseInt(slider.max);
     slider.value = Math.min(max, Math.max(min, newValue));
 
-    console.log(`${slider.id} - ${slider.value}, ${min},${max}`); 
+    // console.log(`${slider.id} - ${slider.value}, ${min},${max}`); 
     slider.dispatchEvent(new Event('input'));
   });
   }
@@ -58,7 +76,9 @@
   const paddedSecs = secs.toString().padStart(2, '0');
   document.getElementById("runtimeDisplay").textContent = `${mins}:${paddedSecs}`;
   }
-
+  function outputScore() {
+    
+  }
   async function updateScore() {
     const age = document.getElementById("age").value || 0;
     const pushup = document.getElementById("pushup").value || 0;
@@ -73,6 +93,7 @@
 
     const data = await response.json();
     document.getElementById("score").textContent = data.score;
+    document.getElementById("score").style.color = data.color;
   }
   
   window.onload = function() {   
